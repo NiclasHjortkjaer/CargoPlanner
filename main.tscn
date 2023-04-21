@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://b8hbvsstyfpqr"]
+
+[ext_resource type="Script" path="res://main.cs" id="1_ld2sk"]
+[ext_resource type="PackedScene" uid="uid://gnodxmjyhfbx" path="res://camera.tscn" id="2_lw0so"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d87n6"]
+albedo_color = Color(1, 0, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_p6s2u"]
+size = Vector3(317.5, 1, 243.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_m1rh2"]
+size = Vector3(337.5, 1, 243.8)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_ld2sk")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+visible = false
+material_override = SubResource("StandardMaterial3D_d87n6")
+mesh = SubResource("BoxMesh_p6s2u")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+visible = false
+mesh = SubResource("BoxMesh_m1rh2")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.868753, 0.223878, 0.441755, 0.478963, 0.606658, 0.634476, -0.125949, 0.762787, -0.634265, 838.748, 684.767, -96.4517)
+
+[node name="CameraGimbal" parent="." instance=ExtResource("2_lw0so")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 207.839, 745.589)

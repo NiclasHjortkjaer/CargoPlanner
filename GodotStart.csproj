@@ -1,0 +1,24 @@
+<Project Sdk="Godot.NET.Sdk/4.0.2">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="3DContainerPacking" Version="1.0.2" />
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="Google.OrTools" Version="9.6.2534" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BookingLists\Bookinglist_07FEB.csv" />
+    <Content Include="BookingLists\Bookinglist_07FEB.XLS" />
+    <Content Include="BookingLists\disposition.csv" />
+    <Content Include="BookingLists\testAVI_EAT.csv" />
+    <Content Include="BookingLists\testICE_AVI.csv" />
+    <Content Include="BookingLists\testPIL_EAT.csv" />
+    <Content Include="BookingLists\testVAL.csv" />
+    <Content Include="BookingLists\TG951-16FEB.csv" />
+    <Content Include="BookingLists\TG951-18FEB.csv" />
+    <Content Include="BookingLists\TG951-19FEB.csv" />
+    <Content Include="BookingLists\TG951-20FEB.csv" />
+  </ItemGroup>
+</Project>
