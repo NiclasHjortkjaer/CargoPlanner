@@ -17,8 +17,6 @@
     <Content Include="BookingLists\testPIL_EAT.csv" />
     <Content Include="BookingLists\testVAL.csv" />
     <Content Include="BookingLists\TG951-16FEB.csv" />
-    <Content Include="BookingLists\TG951-18FEB.csv" />
-    <Content Include="BookingLists\TG951-19FEB.csv" />
     <Content Include="BookingLists\TG951-20FEB.csv" />
   </ItemGroup>
 </Project>

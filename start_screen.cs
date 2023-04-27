@@ -57,7 +57,7 @@ public partial class start_screen : Control
 	public void StartSearch()
 	{
 		GD.Print("JUST STARTED SEARCH!!!");
-		Solution? solution = PlanStarter.Plan(_solutions, _bookingListPath);
+		Solution? solution = PlanStarter.Plan(_bookingListPath);
 		if (solution != null)
 		{
 			_solutions.Add(solution);
@@ -126,10 +126,23 @@ public partial class start_screen : Control
 		csv.NextRecord();
 		foreach (var construction in solution.Constructions)
 		{
+			var packages = 
+				from package in construction.Packages
+				group package by package.ShipmentID into packageGroup
+				select packageGroup;
+
+			var destinationFlights =
+				from package in construction.Packages
+				group package by package.DestinationFlight
+				into packageGroup
+				select packageGroup;
+
 			csv.WriteField(construction.Container.Type);
 			csv.WriteField(construction.Packages.Count);
 			csv.WriteField(Math.Round(construction.TotalWeight,2));
 			csv.WriteField(Math.Round(construction.TotalVolume,3));
+			csv.WriteField(packages.Count());
+			csv.WriteField(destinationFlights.Count());
 			csv.NextRecord();
 
 			csv.WriteField("Origin");
@@ -143,10 +156,6 @@ public partial class start_screen : Control
 			csv.WriteField("Count");
 			csv.NextRecord();
 			
-			var packages = 
-				from package in construction.Packages
-				group package by package.ShipmentID into packageGroup
-				select packageGroup;
 
 			foreach (var packageGroup in packages)
 			{

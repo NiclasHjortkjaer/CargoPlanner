@@ -7,6 +7,7 @@ using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Godot;
+using Google.OrTools.Sat;
 
 namespace GodotStart.Model;
 
@@ -17,7 +18,9 @@ public class PlanStarter
     private static string BookingListPath { get; set; } =
         "/home/niclas/Documents/bachelorprojekt/Bachelor/CargoPlanner/BookingLists/Bookinglist_07FEB.csv";
 
-    public static Solution? Plan(List<Solution> oldSolutions, string bookingListPath)
+    private static List<Solution> _oldSolutions = new List<Solution>();
+
+    public static Solution? Plan(string bookingListPath)
     {
         BookingListPath = bookingListPath;
         var dataModel = LoadData();
@@ -31,7 +34,7 @@ public class PlanStarter
         var limit = 0.95;
 
         DataModel newModel = dataModel;
-        var packagessNotTogether = GenerateNewSolutionConstraint(oldSolutions, newModel);
+        var packagessNotTogether = GenerateNewSolutionConstraint(newModel);
         
         while (!isComplete && limit >= 0)
         {
@@ -59,7 +62,7 @@ public class PlanStarter
                 else
                 {
                     GD.Print("Not complete yet");
-                    packagessNotTogether = GenerateNewSolutionConstraint(oldSolutions, newModel);
+                    packagessNotTogether = GenerateNewSolutionConstraint(newModel);
                     GD.Print($"length: {newModel.Items[0].Length}, width: {newModel.Items[0].Width}, height: {newModel.Items[0].Height}, volume: {newModel.Items[0].Volume}");
                 }
 
@@ -82,7 +85,7 @@ public class PlanStarter
             }
             var solution = new Solution
             {
-                Id = oldSolutions.Count,
+                Id = _oldSolutions.Count,
                 Constructions = constructions,
                 Score = score,
                 ConstructionCount = constructions.Count
@@ -90,7 +93,7 @@ public class PlanStarter
             
             var count = constructions.Sum(construction => construction.Packages.Count);
             GD.Print($"number of packages in total: {count}");
-
+            _oldSolutions.Add(solution);
             return solution;
         }
         else
@@ -101,10 +104,10 @@ public class PlanStarter
         return null;
     }
 
-    private static List<(int,int)> GenerateNewSolutionConstraint(List<Solution> oldSolutions, DataModel newModel)
+    private static List<(int,int)> GenerateNewSolutionConstraint(DataModel newModel)
     {
         var packagesNotTogether = new List<(int, int)>();
-        foreach (var solution in oldSolutions)
+        foreach (var solution in _oldSolutions)
         {
             for (var i = 0; i < solution.Constructions.Count; i++)
             {
@@ -123,10 +126,6 @@ public class PlanStarter
         return packagesNotTogether;
     }
 
-    public static void StopSearch()
-    {
-        _cargoPlanner.StopSearch();
-    }
 
 
     private static DataModel LoadData()
@@ -138,7 +137,7 @@ public class PlanStarter
 
         for (int j = 0; j < 8; j++)
         {
-            dataModel.Containers[j] = new Pallet(j,PalletEnum.PMC, (long) 5201 * 10000, (long) (317.5*243.8*162.6), (long) 317.5, (long) 243.8, (long) 162.6);
+            dataModel.Containers[j] = new Pallet(j,PalletEnum.PMC, (long) 5201 * 10000, (long) (337.5*243.8*152.6), (long) 317.5, (long) 243.8, (long) 162.6);
         }
 
         for (int i = 8; i < 18; i++)
