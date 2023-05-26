@@ -94,7 +94,7 @@ public partial class main : Node3D
 
 				var title = new Label3D
 				{
-					Text = $"ULD: {construction.Container.Type}\nWeight: {Math.Round(construction.TotalWeight,2)} kg\nVolume: {Math.Round(construction.TotalVolume,2)} cm3\nCategories: {construction.CategoryString}\nOrigins: {construction.Originstring}\nDestinations: {construction.DestinationString}",
+					Text = $"ULD: {construction.Container.Type}\nWeight: {Math.Round(construction.TotalWeight,2)} kg\nVolume: {Math.Round(construction.TotalVolume,2)} m3\nCategories: {construction.CategoryString}\nOrigins: {construction.Originstring}\nDestinations: {construction.DestinationString}",
 					Position = new Vector3(i*500, 250, 0),
 					FontSize = 3000,
 					Billboard = BaseMaterial3D.BillboardModeEnum.Enabled

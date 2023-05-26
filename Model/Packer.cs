@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using CromulentBisgetti.ContainerPacking;
 using CromulentBisgetti.ContainerPacking.Algorithms;
 using CromulentBisgetti.ContainerPacking.Entities;
-using Godot;
 using Google.OrTools.Sat;
 using Container = CromulentBisgetti.ContainerPacking.Entities.Container;
 
@@ -35,7 +33,7 @@ public class Packer
 	public (DataModel, List<Construction>) Pack()
 	{
 		var unpackedItems = new List<Item>();
-		var unusedPallets = new List<Pallet>();
+		var unusedPallets = new List<ULD>();
 		var constructions = new List<Construction>();
 
 		for (var j = 0; j < _dataModel.Containers.Length; j++)
@@ -50,7 +48,7 @@ public class Packer
 		}, constructions);
 	}
 
-	public void BuildConstruction(int j, List<Construction> constructions, List<Item> unpackedItems, List<Pallet> unusedPallets, bool firstTry)
+	public void BuildConstruction(int j, List<Construction> constructions, List<Item> unpackedItems, List<ULD> unusedPallets, bool firstTry)
 	{
 		var construction = new Construction();
 
@@ -85,7 +83,7 @@ public class Packer
 		{
 			var algorithms = new List<int> { (int)AlgorithmType.EB_AFIT };
 
-			var result = PackingService.Pack(containers, itemsToPack, algorithms);;
+			var result = PackingService.Pack(containers, itemsToPack, algorithms);
 			
 			construction.Container = _dataModel.Containers[j];
 
@@ -98,8 +96,7 @@ public class Packer
 				totalWeight += package.Weight;
 			}
 
-			construction.TotalWeight = totalWeight/1000000;
-	
+			construction.TotalWeight = totalWeight/100000;
 
 			var itemString = new List<string>(construction.Packages.Count);
 

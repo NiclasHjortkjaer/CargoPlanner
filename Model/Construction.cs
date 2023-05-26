@@ -4,7 +4,7 @@ namespace GodotStart.Model;
 
 public class Construction
 {
-    public Pallet Container { get; set; }
+    public ULD Container { get; set; }
     public List<Package> Packages { get; set; } = new();
     public string ArgumentString { get; set; }
     public double TotalVolume { get; set; }

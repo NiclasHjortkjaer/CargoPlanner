@@ -12,7 +12,6 @@ public class CargoPlanner
     
     public (DataModel?, List<Construction>?) Plan(DataModel dataModel, double limit, List<(int,int)> packagesNotTogether)
     {
-        GD.Print($"Containers: {dataModel.Containers.Length}, Items: {dataModel.Items.Count}");
         var model = new CpModel();
         
         // VARIABLES
@@ -91,7 +90,6 @@ public class CargoPlanner
                     
                     if (rfwN && rcmM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -99,7 +97,6 @@ public class CargoPlanner
                     
                     if (rscN && roxM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -107,7 +104,6 @@ public class CargoPlanner
                     
                     if (aviM && iceN)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());                        
@@ -115,7 +111,6 @@ public class CargoPlanner
 
                     if (eatN && pilM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -123,7 +118,6 @@ public class CargoPlanner
 
                     if (eatN && aviM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -131,7 +125,6 @@ public class CargoPlanner
 
                     if (eatN && humM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -139,7 +132,6 @@ public class CargoPlanner
 
                     if (aviN && humM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -147,7 +139,6 @@ public class CargoPlanner
 
                     if (lhoN && humM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -155,7 +146,6 @@ public class CargoPlanner
 
                     if (lhoN && rclM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -163,7 +153,6 @@ public class CargoPlanner
                     
                     if (hegN && rclM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -171,15 +160,6 @@ public class CargoPlanner
                     
                     if (rflN && roxM)
                     {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
-                        var eitherOr = model.NewBoolVar("eitherOr");
-                        model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
-                        model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
-                    }
-
-                    if (hegN && rclM)
-                    {
-                        // model.AddAtMostOne(new[] { x[m, j], x[n, j] });
                         var eitherOr = model.NewBoolVar("eitherOr");
                         model.Add(x[m,j] == 0).OnlyEnforceIf(eitherOr);
                         model.Add(x[n,j] == 0).OnlyEnforceIf(eitherOr.Not());   
@@ -192,8 +172,9 @@ public class CargoPlanner
         {
             for (var j = 0; j < dataModel.Containers.Length; j++)
             {
-                model.AddImplication(x[i1, j], x[i2, j].Not());
-                model.AddImplication(x[i2, j], x[i1, j].Not());
+                var eitherOr = model.NewBoolVar("eitherOr");
+                model.Add(x[i1,j] == 0).OnlyEnforceIf(eitherOr);
+                model.Add(x[i2,j] == 0).OnlyEnforceIf(eitherOr.Not());  
             }
         }
 
@@ -209,11 +190,5 @@ public class CargoPlanner
         }
 
         return (null, null);
-
-    }
-
-    public async void StopSearch()
-    {
-        _solver.StopSearch();
     }
 }

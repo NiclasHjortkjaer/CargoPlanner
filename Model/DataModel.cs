@@ -4,6 +4,6 @@ namespace GodotStart.Model;
 
 public class DataModel
 {
-    public Pallet[] Containers;
+    public ULD[] Containers;
     public List<Package> Items;
 }

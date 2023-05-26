@@ -2,7 +2,7 @@ using CromulentBisgetti.ContainerPacking.Entities;
 
 namespace GodotStart.Model;
 
-public class Pallet
+public class ULD
 {
     public int ID { get; set; } = 1;
     public PalletEnum Type { get; set; }
@@ -11,7 +11,7 @@ public class Pallet
     public long Length { get; set; }
     public long Width { get; set; }
     public long Height { get; set; }
-    public Pallet(int id, PalletEnum type, long weight, long volume, long length, long width, long height)
+    public ULD(int id, PalletEnum type, long weight, long volume, long length, long width, long height)
     {
         ID = id;
         Type = type;
@@ -22,25 +22,6 @@ public class Pallet
         Height = height;
     }
     
-    public Pallet(PalletEnum type, long weight, long volume, long length, long width, long height)
-    {
-        Type = type;
-        Weight = weight;
-        Volume = volume;
-        Length = length;
-        Width = width;
-        Height = height;
-    }
-    
-    public Pallet(PalletEnum type, long weight, long volume, long sides)
-    {
-        Type = type;
-        Weight = weight;
-        Volume = volume;
-        Length = sides;
-        Width = sides;
-        Height = sides;
-    }
 
     public Container ToContainer()
     {

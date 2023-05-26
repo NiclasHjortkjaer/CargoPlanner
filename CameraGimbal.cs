@@ -7,7 +7,7 @@ public partial class CameraGimbal : Node3D
 	private float _zoomSpeed = 20f;
 	private float _zoom = 150.0f;
 	private float _mouseSensitivity = 0.005f;
-	private bool _rightMousePressed;
+	private bool _leftMousePressed;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -42,7 +42,7 @@ public partial class CameraGimbal : Node3D
 	
 	public override void _Input(InputEvent inputEvent)
 	{
-		if (_rightMousePressed)
+		if (_leftMousePressed)
 		{
 			switch (inputEvent)
 			{
@@ -59,40 +59,28 @@ public partial class CameraGimbal : Node3D
 					break;
 			}
 		}
-		
-		// if (inputEvent.IsActionPressed("cam_zoom_in"))
-		// {
-		// 	_zoom -= _zoomSpeed;
-		// }
-		// if (inputEvent.IsActionPressed("cam_zoom_out"))
-		// {
-		// 	_zoom += _zoomSpeed;
-		// }
-		//
-		// // _zoom = Math.Clamp(_zoom, _minZoom, _maxZoom);
-		// Scale = new Vector3(_zoom,_zoom,_zoom);
 	}
 
 	private void GetInputKeyboard(double delta)
 	{
-		_rightMousePressed = Input.IsMouseButtonPressed(MouseButton.Right);
+		_leftMousePressed = Input.IsMouseButtonPressed(MouseButton.Left);
 
-		if (Input.IsKeyPressed(Key.A))
+		if (Input.IsKeyPressed(Key.A) || Input.IsKeyPressed(Key.Left))
 		{
 			Position -= (GlobalTransform.Basis.X.Normalized() * _zoomSpeed);
 		}
 
-		if (Input.IsKeyPressed(Key.D))
+		if (Input.IsKeyPressed(Key.D) || Input.IsKeyPressed(Key.Right))
 		{
 			Position += (GlobalTransform.Basis.X.Normalized() * _zoomSpeed);
 		}
 
-		if (Input.IsKeyPressed(Key.W))
+		if (Input.IsKeyPressed(Key.W) || Input.IsKeyPressed(Key.Up))
 		{
 			Position -= GlobalTransform.Basis.Z.Normalized() * _zoomSpeed;
 		}
 		
-		if (Input.IsKeyPressed(Key.S))
+		if (Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down))
 		{
 			Position += GlobalTransform.Basis.Z.Normalized() * _zoomSpeed;
 		}

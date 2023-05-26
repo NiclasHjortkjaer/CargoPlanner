@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Godot;
-using Google.OrTools.Sat;
 
 namespace GodotStart.Model;
 
@@ -18,7 +16,7 @@ public class PlanStarter
     private static string BookingListPath { get; set; } =
         "/home/niclas/Documents/bachelorprojekt/Bachelor/CargoPlanner/BookingLists/Bookinglist_07FEB.csv";
 
-    private static List<Solution> _oldSolutions = new List<Solution>();
+    private static List<Solution> _oldSolutions = new();
 
     public static Solution? Plan(string bookingListPath)
     {
@@ -33,42 +31,36 @@ public class PlanStarter
         var constructions = new List<Construction>();
         var limit = 0.95;
 
-        DataModel newModel = dataModel;
-        var packagessNotTogether = GenerateNewSolutionConstraint(newModel);
+        var packagessNotTogether = GenerateNewSolutionConstraint(dataModel);
         
         while (!isComplete && limit >= 0)
         {
 
-            GD.Print($"trying again, limit: {limit}");
-            var noNewConstructions = false;
-            while (!noNewConstructions)
+            while (true)
             {
-                (newModel, var newConstructions) = _cargoPlanner.Plan(newModel, limit, packagessNotTogether);
+                (dataModel, var newConstructions) = _cargoPlanner.Plan(dataModel, limit, packagessNotTogether);
 
-                if (newModel == null && newConstructions == null)
+                if (dataModel == null && newConstructions == null)
                 {
                     limit = 0;
                     break;
                 }
                 
-                constructions.AddRange(newConstructions);
-                GD.Print($"created constructions: {newConstructions.Count}");
-                GD.Print($"new items: {newModel.Items.Count}");
+                if (newConstructions.Count == 0)
+                {
+                    break;
+                }
                 
-                if (newModel.Items.Count == 0)
+                constructions.AddRange(newConstructions);
+                
+                if (dataModel.Items.Count == 0)
                 {
                     isComplete = true;
+                    break;
                 }
                 else
                 {
-                    GD.Print("Not complete yet");
-                    packagessNotTogether = GenerateNewSolutionConstraint(newModel);
-                    GD.Print($"length: {newModel.Items[0].Length}, width: {newModel.Items[0].Width}, height: {newModel.Items[0].Height}, volume: {newModel.Items[0].Volume}");
-                }
-
-                if (newConstructions.Count == 0)
-                {
-                    noNewConstructions = true;
+                    packagessNotTogether = GenerateNewSolutionConstraint(dataModel);
                 }
             }
 
@@ -78,11 +70,6 @@ public class PlanStarter
         if (isComplete)
         {
             var score = 18 - constructions.Count;
-            GD.Print("Valid solution found");
-            if (score > 0)
-            {
-                GD.Print($"Score: {score}");
-            }
             var solution = new Solution
             {
                 Id = _oldSolutions.Count,
@@ -91,14 +78,8 @@ public class PlanStarter
                 ConstructionCount = constructions.Count
             };
             
-            var count = constructions.Sum(construction => construction.Packages.Count);
-            GD.Print($"number of packages in total: {count}");
             _oldSolutions.Add(solution);
             return solution;
-        }
-        else
-        {
-            GD.Print($"no solution found, limit: {limit}");
         }
 
         return null;
@@ -133,16 +114,16 @@ public class PlanStarter
         var dataModel = new DataModel();
         var packageId = 0;
         
-        dataModel.Containers = new Pallet[18];
+        dataModel.Containers = new ULD[18];
 
         for (int j = 0; j < 8; j++)
         {
-            dataModel.Containers[j] = new Pallet(j,PalletEnum.PMC, (long) 5201 * 10000, (long) (337.5*243.8*152.6), (long) 317.5, (long) 243.8, (long) 162.6);
+            dataModel.Containers[j] = new ULD(j,PalletEnum.PMC, (long) 5201 * 10000, (long) (337.5*243.8*152.6), (long) 317.5, (long) 243.8, (long) 162.6);
         }
 
         for (int i = 8; i < 18; i++)
         {
-            dataModel.Containers[i] = new Pallet(i, PalletEnum.AKE, 1587 * 10000, (long) (156.2*153.4*162.6), (long) 156.2, (long) 153.4, (long) 162.6);
+            dataModel.Containers[i] = new ULD(i, PalletEnum.AKE, 1587 * 10000, (long) (156.2*153.4*162.6), (long) 156.2, (long) 153.4, (long) 162.6);
         }
         
         var packages = new List<Package>();

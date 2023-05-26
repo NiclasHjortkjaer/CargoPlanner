@@ -69,9 +69,6 @@ public partial class start_screen : Control
 
 	public void MakeSolutionLine(Solution solution)
 	{
-		var scoreLabel = new Label();
-		scoreLabel.Text = "Score: " + solution.Score;
-
 		var constructionLabel = new Label();
 		constructionLabel.Text = "Number of constructions: " + solution.Constructions.Count;
 
@@ -85,8 +82,6 @@ public partial class start_screen : Control
 
 		var hboxContainer = new HBoxContainer();
 		hboxContainer.AddThemeConstantOverride("separation", 50);
-		hboxContainer.AddChild(scoreLabel);
-		scoreLabel.Owner = hboxContainer;
 		hboxContainer.AddChild(constructionLabel);
 		constructionLabel.Owner = hboxContainer;
 		hboxContainer.AddChild(viewSolutionBtn);
