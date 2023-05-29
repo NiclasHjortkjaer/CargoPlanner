@@ -3,6 +3,7 @@ using System.Linq;
 using CromulentBisgetti.ContainerPacking;
 using CromulentBisgetti.ContainerPacking.Algorithms;
 using CromulentBisgetti.ContainerPacking.Entities;
+using Godot;
 using Google.OrTools.Sat;
 using Container = CromulentBisgetti.ContainerPacking.Entities.Container;
 
@@ -21,7 +22,8 @@ public class Packer
 	private readonly DataModel _dataModel;
 	private readonly BoolVar[,] _x;
 	private readonly CpSolver _solver;
-	private readonly double _limit;
+	private double _limit;
+	private double _highestLimit = 0;
 
 	private static string PackageToArr(Package package)
 	{
@@ -30,25 +32,39 @@ public class Packer
 	}
 
 
-	public (DataModel, List<Construction>) Pack()
+	public (DataModel, List<Construction> constructions, double _limit) Pack()
 	{
-		var unpackedItems = new List<Item>();
-		var unusedPallets = new List<ULD>();
+		var totalUnpackedItems = new List<Item>();
+		var totalUnusedPallets = new List<ULD>();
 		var constructions = new List<Construction>();
 
-		for (var j = 0; j < _dataModel.Containers.Length; j++)
+		while (true)
 		{
-			BuildConstruction(j, constructions, unpackedItems, unusedPallets, true);
+			var unpackedItems = new List<Item>();
+			var unusedPallets = new List<ULD>();
+			for (var j = 0; j < _dataModel.Containers.Length; j++)
+			{
+				BuildConstruction(j, constructions, unpackedItems, unusedPallets, true);
+			}
+			
+			if (constructions.Count > 0)
+			{
+				totalUnpackedItems = unpackedItems;
+				totalUnusedPallets = unusedPallets;
+				break;
+			}
+
+			_limit = _highestLimit;
 		}
 
 		return (new DataModel
 		{
-			Containers = unusedPallets.ToArray(),
-			Items = unpackedItems.Select(item => _dataModel.Items[item.ID]).ToList()
-		}, constructions);
+			Containers = totalUnusedPallets.ToArray(),
+			Items = totalUnpackedItems.Select(item => _dataModel.Items[item.ID]).ToList()
+		}, constructions, _limit);
 	}
 
-	public void BuildConstruction(int j, List<Construction> constructions, List<Item> unpackedItems, List<ULD> unusedPallets, bool firstTry)
+	private void BuildConstruction(int j, List<Construction> constructions, List<Item> unpackedItems, List<ULD> unusedPallets, bool firstTry)
 	{
 		var construction = new Construction();
 
@@ -119,7 +135,7 @@ public class Packer
 				construction.Origins.Add(_dataModel.Items[item.ID].Origin);
 			}
 
-			if (construction.Packages.Count > 0 && (double)packedVolume >= pallet.Volume * _limit)
+			if (construction.Packages.Count > 0 && (double)packedVolume >= pallet.Volume * _limit - 0.001)
 			{
 				if (construction.IsLifted)
 				{
@@ -128,15 +144,23 @@ public class Packer
 				}
 				constructions.Add(construction);
 			}
-			else if (firstTry && construction.Container.Type == PalletEnum.PMC)
-			{
-				BuildConstruction(j, constructions, unpackedItems, unusedPallets, false);
-				return;
-			}
-			else
-			{
-				unusedPallets.Add(pallet);
-				unpackedItems.AddRange(result[0].AlgorithmPackingResults[0].PackedItems);
+			else {
+				if (_highestLimit < (double)packedVolume / pallet.Volume)
+				{
+					_highestLimit = (double)packedVolume / pallet.Volume;
+				}
+
+				if (firstTry && construction.Container.Type == PalletEnum.PMC)
+				{
+					BuildConstruction(j, constructions, unpackedItems, unusedPallets, false);
+					return;
+				}
+				else
+				{
+					unusedPallets.Add(pallet);
+					unpackedItems.AddRange(result[0].AlgorithmPackingResults[0].PackedItems);
+				}
+					
 			}
 
 			unpackedItems.AddRange(result[0].AlgorithmPackingResults[0].UnpackedItems);

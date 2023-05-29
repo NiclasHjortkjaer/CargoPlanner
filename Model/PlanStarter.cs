@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -33,38 +34,30 @@ public class PlanStarter
 
         var packagessNotTogether = GenerateNewSolutionConstraint(dataModel);
         
-        while (!isComplete && limit >= 0)
+        while (true)
         {
-
-            while (true)
+            (dataModel, var newConstructions, limit) = _cargoPlanner.Plan(dataModel, limit, packagessNotTogether);
+            if (dataModel == null && newConstructions == null)
             {
-                (dataModel, var newConstructions) = _cargoPlanner.Plan(dataModel, limit, packagessNotTogether);
-
-                if (dataModel == null && newConstructions == null)
-                {
-                    limit = 0;
-                    break;
-                }
-                
-                if (newConstructions.Count == 0)
-                {
-                    break;
-                }
-                
-                constructions.AddRange(newConstructions);
-                
-                if (dataModel.Items.Count == 0)
-                {
-                    isComplete = true;
-                    break;
-                }
-                else
-                {
-                    packagessNotTogether = GenerateNewSolutionConstraint(dataModel);
-                }
+                break;
             }
-
-            limit -= 0.05;
+            
+            if (newConstructions.Count == 0)
+            {
+                break;
+            }
+            
+            constructions.AddRange(newConstructions);
+            
+            if (dataModel.Items.Count == 0)
+            {
+                isComplete = true;
+                break;
+            }
+            else
+            {
+                packagessNotTogether = GenerateNewSolutionConstraint(dataModel);
+            }
         }
 
         if (isComplete)

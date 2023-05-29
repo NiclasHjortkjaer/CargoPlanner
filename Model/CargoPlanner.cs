@@ -10,7 +10,7 @@ public class CargoPlanner
 {
     private CpSolver _solver;
     
-    public (DataModel?, List<Construction>?) Plan(DataModel dataModel, double limit, List<(int,int)> packagesNotTogether)
+    public (DataModel, List<Construction> constructions, double _limit) Plan(DataModel dataModel, double limit, List<(int,int)> packagesNotTogether)
     {
         var model = new CpModel();
         
@@ -189,6 +189,6 @@ public class CargoPlanner
             return packer.Pack();
         }
 
-        return (null, null);
+        return (null, null, limit);
     }
 }
